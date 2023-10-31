@@ -1,0 +1,16 @@
+*.iws
+.idea
+.DS_Store
+node_modules
+appconfig.*
+.torrent*
+*.log
+*~
+.parcel-cache
+generatedFiles
+*.zip
+
+# Build directories
+lib
+lib-web
+proto-ts
