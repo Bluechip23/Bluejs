@@ -1,0 +1,21 @@
+syntax = "proto3";
+package smartdev0328.bluechip.pageinflation;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "github.com/Smartdev0328/bluechip/x/pageinflation/types";
+
+// Msg defines the Msg service.
+service Msg {
+      rpc CreatorPoolMint(MsgCreatorPoolMint) returns (MsgCreatorPoolMintResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgCreatorPoolMint {
+  string creator = 1;
+}
+
+message MsgCreatorPoolMintResponse {
+}
+
+// this line is used by starport scaffolding # proto/tx/message

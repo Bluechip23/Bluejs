@@ -1,0 +1,60 @@
+syntax = "proto3";
+package smartdev0328.bluechip.pageinflation;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "pageinflation/params.proto";
+import "pageinflation/mint_denom.proto";
+import "pageinflation/start_block.proto";
+import "pageinflation/minted_pool.proto";
+// this line is used by starport scaffolding # 1
+
+option go_package = "github.com/Smartdev0328/bluechip/x/pageinflation/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/smartdev0328/bluechip/pageinflation/params";
+  }
+  // Queries a MintDenom by index.
+	rpc MintDenom(QueryGetMintDenomRequest) returns (QueryGetMintDenomResponse) {
+		option (google.api.http).get = "/smartdev0328/bluechip/pageinflation/mint_denom";
+	}
+// Queries a StartBlock by index.
+	rpc StartBlock(QueryGetStartBlockRequest) returns (QueryGetStartBlockResponse) {
+		option (google.api.http).get = "/smartdev0328/bluechip/pageinflation/start_block";
+	}
+// Queries a MintedPool by index.
+	rpc MintedPool(QueryGetMintedPoolRequest) returns (QueryGetMintedPoolResponse) {
+		option (google.api.http).get = "/smartdev0328/bluechip/pageinflation/minted_pool";
+	}
+// this line is used by starport scaffolding # 2
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetMintDenomRequest {}
+
+message QueryGetMintDenomResponse {
+	MintDenom MintDenom = 1 [(gogoproto.nullable) = false];
+}
+message QueryGetStartBlockRequest {}
+
+message QueryGetStartBlockResponse {
+	StartBlock StartBlock = 1 [(gogoproto.nullable) = false];
+}
+message QueryGetMintedPoolRequest {}
+
+message QueryGetMintedPoolResponse {
+	MintedPool MintedPool = 1 [(gogoproto.nullable) = false];
+}
+// this line is used by starport scaffolding # 3

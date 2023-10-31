@@ -1,0 +1,9 @@
+syntax = "proto3";
+package smartdev0328.bluechip.pageinflation;
+
+option go_package = "github.com/Smartdev0328/bluechip/x/pageinflation/types";
+
+message MintDenom {
+  string value = 1; 
+  
+}

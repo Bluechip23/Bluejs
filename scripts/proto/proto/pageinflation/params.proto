@@ -1,0 +1,12 @@
+syntax = "proto3";
+package smartdev0328.bluechip.pageinflation;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/Smartdev0328/bluechip/x/pageinflation/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}
