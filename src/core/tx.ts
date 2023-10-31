@@ -1,28 +1,11 @@
 import { BluechipClient } from './sdk';
-import { MsgPin } from '../bluechip/lib/generated/storage/tx';
 import { EncodeObject, Registry } from '@cosmjs/proto-signing';
 import { Deferred, newDeferred } from '../utils/Deferred';
 import { Left, Right, Some } from 'monet';
 import { passThrough } from 'promise-passthrough';
 import { identity } from 'lodash';
 import { MsgSend } from '../bluechip/lib/generated/cosmos/bank/v1beta1/tx';
-import {
-    MsgCreateCollection,
-    MsgCreateNFT,
-    MsgPrintEdition,
-    MsgSignMetadata,
-    MsgTransferNFT,
-    MsgUpdateCollectionMutableUri,
-    MsgUpdateCollectionUri,
-    MsgUpdateMetadata,
-    MsgUpdateMetadataAuthority,
-    MsgUpdateMintAuthority
-} from '../bluechip/lib/generated/nft/tx';
-import {
-    MsgSetGasTaxBp,
-    MsgSetTaxCollector,
-    MsgSetTransferTaxBp
-} from '../bluechip/lib/generated/tax/tx';
+
 import {
     MsgBeginRedelegate,
     MsgDelegate,
@@ -94,29 +77,15 @@ const endTransaction = (queue: MsgQueue, client: BluechipClient) => {
 
 
 export const registerMessages = (registry: Registry) => {
-    registry.register('/bluechip.bluechip.storage.MsgPin', MsgPin);
     registry.register('/cosmos.bank.v1beta1.MsgSend', MsgSend)
-    registry.register('/bluechip.bluechip.tax.MsgSetGasTaxBp', MsgSetGasTaxBp)
-    registry.register('/bluechip.bluechip.tax.MsgSetTransferTaxBp', MsgSetTransferTaxBp)
-    registry.register('/bluechip.bluechip.tax.MsgSetTaxCollector', MsgSetTaxCollector)
     registry.register('/cosmos.staking.v1beta1.MsgDelegate', MsgDelegate)
     registry.register('/cosmos.staking.v1beta1.MsgUndelegate', MsgUndelegate)
     registry.register('/cosmos.staking.v1beta1.MsgBeginRedelegate', MsgBeginRedelegate)
     registry.register('/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward', MsgWithdrawDelegatorReward)
     registry.register('/cosmos.distribution.v1beta1.MsgFundCommunityPool', MsgFundCommunityPool)
-    registry.register('/bluechip.bluechip.nft.MsgCreateNFT', MsgCreateNFT)
-    registry.register('/bluechip.bluechip.nft.MsgCreateCollection', MsgCreateCollection)
-    registry.register('/bluechip.bluechip.nft.MsgTransferNFT', MsgTransferNFT)
-    registry.register('/bluechip.bluechip.nft.MsgUpdateMintAuthority', MsgUpdateMintAuthority)
-    registry.register('/bluechip.bluechip.nft.MsgUpdateMetadata', MsgUpdateMetadata)
-    registry.register('/bluechip.bluechip.nft.MsgUpdateMetadataAuthority', MsgUpdateMetadataAuthority)
-    registry.register('/bluechip.bluechip.nft.MsgPrintEdition', MsgPrintEdition)
-    registry.register('/bluechip.bluechip.nft.MsgSignMetadata', MsgSignMetadata)
     registry.register('/cosmos.authz.v1beta1.MsgGrant', MsgGrant)
     registry.register('/cosmos.authz.v1beta1.MsgExec', MsgExec)
     registry.register('/cosmos.authz.v1beta1.MsgRevoke', MsgRevoke)
-    registry.register('/bluechip.bluechip.nft.MsgUpdateCollectionUri', MsgUpdateCollectionUri)
-    registry.register('/bluechip.bluechip.nft.MsgUpdateCollectionMutableUri', MsgUpdateCollectionMutableUri)
     registry.register('/cosmos.vesting.v1beta1.MsgCreateVestingAccount', MsgCreateVestingAccount)
     registry.register('/cosmos.gov.v1beta1.MsgSubmitProposal', MsgSubmitProposal)
     registry.register('/cosmos.gov.v1beta1.MsgVote', MsgVote)

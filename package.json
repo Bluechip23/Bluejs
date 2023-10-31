@@ -45,7 +45,6 @@
     "buffer": "^6.0.3",
     "chai-as-promised": "^7.1.1",
     "crypto-browserify": "^3.12.0",
-    "daemon-manager": "^1.0.4",
     "dts-bundle-generator": "^6.9.0",
     "protobufjs": "6.11.3",
     "stream-browserify": "^3.0.0",

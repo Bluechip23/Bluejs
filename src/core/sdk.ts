@@ -1,14 +1,10 @@
 import {createProtobufRpcClient, QueryClient, SequenceResponse, SigningStargateClient} from "@cosmjs/stargate";
 import {getRegistry} from "./registry";
 import {SigningStargateClientOptions} from "@cosmjs/stargate/build/signingstargateclient";
-import {QueryClientImpl as StorageQueryClientImpl} from "../bluechip/lib/generated/storage/query";
 import {QueryClientImpl as BankQueryClientImpl} from "../bluechip/lib/generated/cosmos/bank/v1beta1/query";
-import {QueryClientImpl as FaucetQueryClientImpl} from '../bluechip/lib/generated/faucet/query'
 import {BluechipWallet} from "../wallets/BluechipWallet";
-import {QueryClientImpl as TaxQueryClientImpl} from '../bluechip/lib/generated/tax/query';
 import {QueryClientImpl as StakingQueryClientImpl} from "../bluechip/lib/generated/cosmos/staking/v1beta1/query";
 import {QueryClientImpl as DistributionQueryClientImpl} from "../bluechip/lib/generated/cosmos/distribution/v1beta1/query";
-import {QueryClientImpl as NftQueryClientImpl} from "../bluechip/lib/generated/nft/query";
 import {QueryClientImpl as AuthzQueryClientImpl} from "../bluechip/lib/generated/cosmos/authz/v1beta1/query";
 import {MsgClientImpl as VestingClientImpl} from "../bluechip/lib/generated/cosmos/vesting/v1beta1/tx";
 import {QueryClientImpl as GovQueryClientImpl} from "../bluechip/lib/generated/cosmos/gov/v1beta1/query";
@@ -19,14 +15,10 @@ import {Tendermint34Client} from "@cosmjs/tendermint-rpc";
 
 
 type QueryClientImpl = {
-  storage: StorageQueryClientImpl;
   bank: BankQueryClientImpl;
-  faucet: FaucetQueryClientImpl;
-  tax: TaxQueryClientImpl;
   staking: StakingQueryClientImpl;
   distribution: DistributionQueryClientImpl;
   tx: ServiceClientImpl;
-  nft: NftQueryClientImpl;
   authz: AuthzQueryClientImpl;
   vesting: VestingClientImpl;
   gov: GovQueryClientImpl;
@@ -67,14 +59,10 @@ const getRpcClient = (url: string): Promise<QueryClientImpl> =>
     .then(tendermintClient => new QueryClient(tendermintClient))
     .then(createProtobufRpcClient)
     .then(rpcClient => Promise.resolve({
-      storage: new StorageQueryClientImpl(rpcClient),
       bank: new BankQueryClientImpl(rpcClient),
-      faucet: new FaucetQueryClientImpl(rpcClient),
-      tax: new TaxQueryClientImpl(rpcClient),
       staking: new StakingQueryClientImpl(rpcClient),
       distribution: new DistributionQueryClientImpl(rpcClient),
       tx: new ServiceClientImpl(rpcClient),
-      nft: new NftQueryClientImpl(rpcClient),
       authz: new AuthzQueryClientImpl(rpcClient),
       vesting: new VestingClientImpl(rpcClient),
       gov: new GovQueryClientImpl(rpcClient),
