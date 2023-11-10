@@ -5,8 +5,8 @@ import {readdirSync, statSync} from "fs";
 import * as path from 'path'
 
 
-const rootDir = () => path.join(__dirname, '../../..');
-const getBluechipProtoDir = () => path.join(rootDir(), 'bluechip/proto');
+const rootDir = () => path.join(__dirname, '../');
+const getBluechipProtoDir = () => path.join(rootDir(), '/proto');
 
 export const getAllFiles = (dir: string, filePaths: string[] = []): string[] => {
     const files = readdirSync(dir)

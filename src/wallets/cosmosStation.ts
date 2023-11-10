@@ -33,7 +33,7 @@ const addBluechipChain = (chainId: string, nodeAddress: string, ports: Ports, pr
         chainId: chainId,
         chainName: `Bluechip:${chainId}`,
         baseDenom: "ubluechip",
-        displayDenom: "BLZ",
+        displayDenom: "BCP",
         restURL: `${protocol}://${nodeAddress}:${ports.restPort}`,
         coinType: "483",
         addressPrefix: "bluechip",

@@ -38,32 +38,22 @@ const addBluechipChain = (chainId: string, nodeAddress: string, ports: Ports, pr
         },
         currencies: [
             {
-                coinDenom: "BLZ",
+                coinDenom: "BCP",
                 coinMinimalDenom: "ubluechip",
                 coinDecimals: 6,
                 coinGeckoId: "bluechip",
             },
-            {
-                coinDenom: "ELT",
-                coinMinimalDenom: "uelt",
-                coinDecimals: 6,
-            },
-            {
-                coinDenom: "G4",
-                coinMinimalDenom: "ug4",
-                coinDecimals: 6,
-            },
         ],
         feeCurrencies: [
             {
-                coinDenom: "BLZ",
+                coinDenom: "BCP",
                 coinMinimalDenom: "ubluechip",
                 coinDecimals: 6,
                 coinGeckoId: "bluechip",
             },
         ],
         stakeCurrency: {
-            coinDenom: "BLZ",
+            coinDenom: "BCP",
             coinMinimalDenom: "ubluechip",
             coinDecimals: 6,
             coinGeckoId: "bluechip",
