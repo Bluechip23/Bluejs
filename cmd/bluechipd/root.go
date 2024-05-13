@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"context"
 	"errors"
 	"io"
 	"os"
@@ -11,8 +13,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/config"
 	"github.com/cosmos/cosmos-sdk/client/debug"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/input"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/server"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/snapshots"
@@ -23,7 +28,9 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
+	distcli "github.com/cosmos/cosmos-sdk/x/distribution/client/cli"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
+	stakingcli "github.com/cosmos/cosmos-sdk/x/staking/client/cli"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -113,9 +120,13 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
 
 	// add keybase, auxiliary RPC, query, and tx child commands
 	rootCmd.AddCommand(
-		rpc.StatusCommand(),
+		rpc.StatusCommand(), // Query Node Status
 		queryCommand(),
 		txCommand(),
+		keyCommand(),
+		CatchingUpCommand(),
+		NodeIDCommand(),
+		AddEncryptedKeyCommand(app.DefaultNodeHome),
 		keys.Commands(app.DefaultNodeHome),
 	)
 }
@@ -141,6 +152,7 @@ func queryCommand() *cobra.Command {
 		rpc.BlockCommand(),
 		authcmd.QueryTxsByEventsCmd(),
 		authcmd.QueryTxCmd(),
+		stakingcli.GetCmdQueryValidator(), // Query a validator by validator address
 	)
 
 	app.ModuleBasics.AddQueryCommands(cmd)
@@ -168,10 +180,102 @@ func txCommand() *cobra.Command {
 		authcmd.GetBroadcastCommand(),
 		authcmd.GetEncodeCommand(),
 		authcmd.GetDecodeCommand(),
+		stakingcli.NewCreateValidatorCmd(), // Create Validator
+		distcli.NewWithdrawRewardsCmd(),    // Withdraw Rewards from Your Validator Address
+		stakingcli.NewDelegateCmd(),        // Staking Coins
+		stakingcli.GetCmdQueryDelegation(), // Query a Delegation
+		distcli.NewWithdrawAllRewardsCmd(), // Withdraw all rewards for a single delegator.
+		stakingcli.NewEditValidatorCmd(),   // Edit an existing validator's settings, such as commission rate, name, etc.
+		stakingcli.NewDelegateCmd(),        // Delegate tokens to a validator
+		stakingcli.NewUnbondCmd(),          // Unbond tokens from a validator
+		stakingcli.NewRedelegateCmd(),      // Redelegate some tokens to another validator
 	)
 
 	app.ModuleBasics.AddTxCommands(cmd)
 	cmd.PersistentFlags().String(flags.FlagChainID, "", "The network chain ID")
+
+	return cmd
+}
+
+func keyCommand() *cobra.Command {
+	cmd := keys.Commands(app.DefaultNodeHome)
+	cmd.AddCommand(
+		keys.AddKeyCommand(), // Create New Keys for Validator
+		keys.ShowKeysCmd(),   // Query the Keystore for Your Public Address
+	)
+	return cmd
+}
+
+// Check if Node is Catching Up
+func CatchingUpCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "catching-up",
+		Short: "Check if the node is catching up with the network",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			status, err := clientCtx.Client.Status(context.Background())
+			if err != nil {
+				return err
+			}
+			cmd.Println("Is Catching Up:", status.SyncInfo.CatchingUp)
+			return nil
+		},
+	}
+}
+
+// Get Node ID
+func NodeIDCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "node-id",
+		Short: "Get the node's ID",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			status, err := clientCtx.Client.Status(context.Background())
+			if err != nil {
+				return err
+			}
+			cmd.Println("Node ID:", status.NodeInfo.ID)
+			return nil
+		},
+	}
+}
+
+// Add an encrypted private key, encrypt it, and save to disk.
+func AddEncryptedKeyCommand(defaultNodeHome string) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add-encrypted-key [name]",
+		Short: "Add an encrypted private key",
+		Long:  `Create a new encrypted private key, encrypt it with a passphrase, and save it to disk.`,
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// clientCtx := client.GetClientContextFromCmd(cmd)
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+
+			name := args[0]
+			kb, err := keyring.New(sdk.KeyringServiceName(), keyring.BackendFile, defaultNodeHome, inBuf)
+			if err != nil {
+				return err
+			}
+
+			// Get the passphrase
+			passphrase, err := input.GetPassword("Enter passphrase to encrypt the private key:", inBuf)
+			if err != nil {
+				return err
+			}
+
+			// Add the key
+			info, err := kb.NewAccount(name, passphrase, "", hd.CreateHDPath(118, 0, 0).String(), hd.Secp256k1)
+			if err != nil {
+				return err
+			}
+
+			// Output the address and pubkey
+			cmd.Println("Address:", info.GetAddress().String())
+			cmd.Println("PubKey:", info.GetPubKey().String())
+
+			return nil
+		},
+	}
 
 	return cmd
 }
