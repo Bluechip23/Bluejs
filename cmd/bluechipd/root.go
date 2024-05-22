@@ -26,10 +26,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	bankcli "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	distcli "github.com/cosmos/cosmos-sdk/x/distribution/client/cli"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
+	slashingcli "github.com/cosmos/cosmos-sdk/x/slashing/client/cli"
 	stakingcli "github.com/cosmos/cosmos-sdk/x/staking/client/cli"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
@@ -152,7 +154,16 @@ func queryCommand() *cobra.Command {
 		rpc.BlockCommand(),
 		authcmd.QueryTxsByEventsCmd(),
 		authcmd.QueryTxCmd(),
-		stakingcli.GetCmdQueryValidator(), // Query a validator by validator address
+		bankcli.GetBalancesCmd(),                         // Query the total balance of an account or of a specific denomination.
+		bankcli.GetCmdQueryTotalSupply(),                 // Query total supply of tokens that are held by accounts
+		distcli.GetCmdQueryDelegatorRewards(),            // Query all rewards earned by a delegator, optionally restrict to rewards from a single validator
+		distcli.GetCmdQueryValidatorSlashes(),            // Query all slashes of a validator for a given block range
+		distcli.GetCmdQueryValidatorOutstandingRewards(), // Query distribution outstanding (un-withdrawn) rewards for a validator and all their delegations.
+		distcli.GetCmdQueryValidatorCommission(),         // Query distribution validator commission
+		slashingcli.GetCmdQuerySigningInfo(),             // Check if you are Jailed or Tombstoned
+		stakingcli.GetCmdQueryValidator(),                // Query a validator by validator address
+		stakingcli.GetCmdQueryValidators(),               // Query all validators
+		stakingcli.GetCmdQueryValidatorDelegations(),     // Query all delegations to one validator
 	)
 
 	app.ModuleBasics.AddQueryCommands(cmd)
@@ -184,7 +195,9 @@ func txCommand() *cobra.Command {
 		distcli.NewWithdrawRewardsCmd(),    // Withdraw Rewards from Your Validator Address
 		stakingcli.NewDelegateCmd(),        // Staking Coins
 		stakingcli.GetCmdQueryDelegation(), // Query a Delegation
+		bankcli.NewSendTxCmd(),             // Send tokens to another address
 		distcli.NewWithdrawAllRewardsCmd(), // Withdraw all rewards for a single delegator.
+		slashingcli.NewUnjailTxCmd(),       // Unjail Validator
 		stakingcli.NewEditValidatorCmd(),   // Edit an existing validator's settings, such as commission rate, name, etc.
 		stakingcli.NewDelegateCmd(),        // Delegate tokens to a validator
 		stakingcli.NewUnbondCmd(),          // Unbond tokens from a validator
@@ -200,8 +213,9 @@ func txCommand() *cobra.Command {
 func keyCommand() *cobra.Command {
 	cmd := keys.Commands(app.DefaultNodeHome)
 	cmd.AddCommand(
-		keys.AddKeyCommand(), // Create New Keys for Validator
-		keys.ShowKeysCmd(),   // Query the Keystore for Your Public Address
+		keys.AddKeyCommand(),    // Create New Keys for Validator
+		keys.ShowKeysCmd(),      // Query the Keystore for Your Public Address
+		keys.DeleteKeyCommand(), // Delete the given key
 	)
 	return cmd
 }
