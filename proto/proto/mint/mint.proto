@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package smartdev0328.bluechip.mint;
+package BlueChip23.bluechip.mint;
 
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/Smartdev0328/bluechip/x/mint/types";
+option go_package = "github.com/BlueChip23/bluechip/x/mint/types";
 
 // Minter represents the minting state.
 message Minter {

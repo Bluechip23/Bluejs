@@ -1,5 +1,5 @@
 syntax = "proto3";
-package smartdev0328.bluechip.mint;
+package BlueChip23.bluechip.mint;
 
 
 import "gogoproto/gogo.proto";

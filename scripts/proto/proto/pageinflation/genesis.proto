@@ -1,5 +1,5 @@
 syntax = "proto3";
-package smartdev0328.bluechip.pageinflation;
+package BlueChip23.bluechip.pageinflation;
 
 import "gogoproto/gogo.proto";
 import "pageinflation/params.proto";
@@ -8,7 +8,7 @@ import "pageinflation/start_block.proto";
 import "pageinflation/minted_pool.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
-option go_package = "github.com/Smartdev0328/bluechip/x/pageinflation/types";
+option go_package = "github.com/BlueChip23/bluechip/x/pageinflation/types";
 
 // GenesisState defines the pageinflation module's genesis state.
 message GenesisState {
